@@ -1,0 +1,61 @@
+@import "grid-settings.scss";
+%grid {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  &__item {
+    @for $i from 1 through $grid-columns {
+      $item_width: 100% / $grid-columns * $i;
+      &_col-#{$i} {
+        flex: 0 #{$item_width};
+      }
+    }
+  }
+  $screens: map-keys($breakpoints);
+  $screens_count: length($screens);
+  @each $screen, $size in $grid-breakpoints {
+    $index: index($screens, $screen);
+    $next_index: $index + 1;
+    &-#{$screen} {
+      @if ($next_index > $screens_count) {
+        @media (min-width: $size) {
+          display: flex;
+          flex-flow: row wrap;
+          justify-content: flex-start;
+          align-items: stretch;
+        }
+        &__item {
+          @for $i from 1 through $grid-columns {
+            $item_width: 100% / $grid-columns * $i;
+            &_col-#{$i} {
+              @media (min-width: $size) {
+                flex: 0 #{$item_width};
+              }
+            }
+          }
+        }
+      }
+      @else {
+        $next_screen: nth($screens, $next_index);
+        $next_size: map-get($breakpoints, $next_screen);
+        @media (min-width: $size) and (max-width: $next_size - 1px) {
+          display: flex;
+          flex-flow: row wrap;
+          justify-content: flex-start;
+          align-items: stretch;
+        }
+        &__item {
+          @for $i from 1 through $grid-columns {
+            $item_width: 100% / $grid-columns * $i;
+            &_col-#{$i} {
+              @media (min-width: $size) {
+                flex: 0 #{$item_width};
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
